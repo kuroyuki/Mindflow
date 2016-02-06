@@ -3,8 +3,13 @@ var App = function(aCanvas) {
   var canvas;
   var context;
 
+	var activeItem = null;
+	var items = [];
+
   app.resize = function(e) {
 		resizeCanvas();
+		//redraw all items
+		items.forEach(function(item){	item.draw(context);})
 	};
   var resizeCanvas = function() {
 		canvas.width = window.innerWidth;
@@ -13,6 +18,24 @@ var App = function(aCanvas) {
   app.mouseup = function(e) {
 	};
   app.mousedown = function(e) {
+		//find click point
+		var rect = canvas.getBoundingClientRect();
+		var clickPos = {
+			x: e.clientX - rect.left,
+			y: e.clientY - rect.top
+		};
+		//check if item is clicked
+		for(var i=0;i<items.length;i++){
+			//if clicked position inside an item
+			if((items[i].x < clickPos.x) && ((items[i].x + items[i].width) > clickPos.x)
+				&&(items[i].y < clickPos.y) && ((items[i].y + items[i].height) > clickPos.y))
+			{
+				//make it active item
+				app.setFocus(items[i]);
+				//one is enough
+				return;
+			}
+		}
   };
 	app.mousemove = function(e) {
 	};
@@ -34,16 +57,27 @@ var App = function(aCanvas) {
     }
   };
 
+	app.setFocus = function(focusedItem){
+		if(activeItem != null){
+			activeItem.changeFocus(false, context);
+		}
+		focusedItem.changeFocus(true, context);
+		activeItem = focusedItem;
+	};
+
+	app.addNewItem = function(x,y){
+		var thought = new Thought(x,y, new Date());
+		app.setFocus(thought);
+		items.push(thought);
+	};
   // Constructor
 	(function(){
 		canvas = aCanvas;
 		context = canvas.getContext('2d');
 		resizeCanvas();
 
-    var thought1 = new Thought(10,10);
-    var thought2 = new Thought(10,100);
-
-    thought1.draw(context);
-    thought2.draw(context);
+   	app.addNewItem(10,10);
+		app.addNewItem(10,150);
+		app.addNewItem(10,300);
   }());
 }
