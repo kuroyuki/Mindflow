@@ -70,12 +70,17 @@ var App = function(aCanvas) {
 		app.setFocus(thought);
 		items.push(thought);
 	};
+	
   // Constructor
 	(function(){
 		canvas = aCanvas;
 		context = canvas.getContext('2d');
 		resizeCanvas();
 
+		//set background
+		canvas.style.backgroundColor = 'rgba(100, 100, 100, 1)';
+
+		//set up items
    	app.addNewItem(10,10);
 		app.addNewItem(10,150);
 		app.addNewItem(10,300);
